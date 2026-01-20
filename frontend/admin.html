@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Online Voting Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #admin-content {
+            display: none;
+        }
+
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="card max-w-md w-full text-center p-10 shadow-lg flex flex-col justify-center min-h-400">
+            <!-- Optimized size -->
+            <h2 class="text-3xl font-bold mb-4 text-gray-800">Admin Access</h2>
+            <p class="text-secondary mb-8 text-lg">Enter master password to access the dashboard.</p>
+
+            <div class="w-1/4 mx-auto">
+                <input type="password" id="admin-pass"
+                    class="w-full p-4 border border-gray-300 bg-white rounded-lg mb-4 text-center text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="Password">
+                <button id="btn-admin-login"
+                    class="btn btn-primary w-full py-4 mt-4 text-lg font-bold shadow-md hover:shadow-lg">View
+                    Results</button>
+                <p id="login-error" class="text-red-500 text-sm mt-3 hidden bg-red-50 p-2 rounded">Incorrect password.
+                </p>
+                <a href="index.html"
+                    class="block mt-6 text-sm text-secondary hover:text-primary transition-colors">Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div id="admin-content" class="fade-in">
+        <nav class="navbar bg-white shadow-sm sticky-top">
+            <div class="container flex justify-between items-center py-4">
+                <span class="logo text-xl font-bold text-primary">Admin<span class="text-accent">Panel</span></span>
+                <div class="flex gap-4">
+                    <a href="results.html" class="btn btn-sm btn-primary">Declare Results</a>
+                    <a href="index.html" class="btn btn-sm btn-outline">Home</a>
+                    <button onclick="localStorage.removeItem('admin_session'); location.reload()"
+                        class="btn btn-sm btn-ghost text-red-500">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container py-8">
+            <header class="text-center mb-10">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Voter Registry</h1>
+                <p class="text-gray-600 mb-6">Confidential list of all votes cast.</p>
+                <a href="results.html" class="btn btn-primary shadow-md hover:shadow-lg gap-2">
+                    <span class="text-lg">🏆</span> Declare Election Winner
+                </a>
+            </header>
+
+            <div class="card max-w-4xl mx-auto p-0 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="p-4 border-b">Voter Name</th>
+                                <th class="p-4 border-b">Candidate Voted For</th>
+                                <th class="p-4 border-b">Profile</th>
+                                <th class="p-4 border-b text-right">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-voters-list" class="divide-y divide-gray-200">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

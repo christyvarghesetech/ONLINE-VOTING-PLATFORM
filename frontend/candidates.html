@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote for Candidates - Online Voting Platform</title>
+    <meta name="description" content="View candidates and cast your vote in the Online Voting Platform.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+
+    <nav class="navbar bg-white shadow-sm sticky-top">
+        <div class="container flex justify-between items-center py-4">
+            <a href="#" class="logo text-xl font-bold text-primary">Vote<span class="text-accent">Now</span></a>
+            <div class="user-menu flex items-center gap-4">
+                <span id="user-name" class="font-medium text-secondary hidden sm:block">User</span>
+                <button id="btn-logout" class="btn btn-sm btn-ghost text-red-500">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-8 fade-in">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Cast Your Vote</h1>
+            <p class="text-gray-600">Select your preferred candidate below. You can only vote once.</p>
+        </header>
+
+        <div id="candidates-grid" class="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Candidate cards will be injected here by JS -->
+            <div class="skeleton-card card"></div>
+            <div class="skeleton-card card"></div>
+        </div>
+    </main>
+
+    <!-- Profile Completion Modal -->
+    <div id="profile-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center fade-in">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">One Last Step!</h2>
+                <p class="text-gray-500 mt-2">Please provide your LinkedIn profile to continue.</p>
+            </div>
+
+            <form id="profile-form" class="space-y-4 flex flex-col items-center">
+                <div class="w-full flex flex-col items-center">
+                    <label for="linkedin-url"
+                        class="block text-sm font-medium text-gray-700 mb-1 self-start ml-8">LinkedIn Profile
+                        URL</label>
+                    <input type="url" id="linkedin-url" required placeholder="https://linkedin.com/in/username"
+                        class="w-64 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                </div>
+                <button type="submit" class="w-64 btn btn-primary py-2 font-semibold text-sm">
+                    Save & Continue
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/candidates.js"></script>
+</body>
+
+</html>

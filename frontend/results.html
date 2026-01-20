@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Results - Online Voting Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .winner-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f2d74e;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="navbar bg-white shadow-sm">
+        <div class="container flex justify-between items-center py-4">
+            <span class="logo text-xl font-bold text-primary">Admin<span class="text-accent">Panel</span></span>
+            <a href="admin.html" class="btn btn-sm btn-outline">&larr; Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="container flex-grow flex items-center justify-center py-8 fade-in">
+        <div class="text-center w-full max-w-2xl">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Election Result Declaration</h1>
+            <p class="text-secondary mb-12 text-lg">The votes have been successfully tallied.</p>
+
+            <div id="result-container" class="winner-card rounded-2xl p-12 relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="uppercase tracking-widest text-sm font-semibold text-primary mb-4">And the winner is</p>
+
+                    <h2 id="winner-name" class="text-5xl font-bold text-gray-900 mb-6">Loading...</h2>
+
+                    <div class="flex justify-center items-center gap-12 mb-8">
+                        <div class="text-center">
+                            <span id="winner-votes" class="block text-4xl font-bold text-accent">0</span>
+                            <span class="text-sm text-secondary">Votes</span>
+                        </div>
+                        <div class="h-12 w-px bg-gray-300"></div>
+                        <div class="text-center">
+                            <span id="total-votes" class="block text-4xl font-bold text-gray-600">0</span>
+                            <span class="text-sm text-secondary">Total Cast</span>
+                        </div>
+                    </div>
+
+                    <a id="winner-link" href="#" target="_blank" class="btn btn-primary px-8 py-3 text-lg hidden">
+                        View LinkedIn Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Voters List Section -->
+            <div class="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Who has voted?</h3>
+                <div id="voters-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Voters injected via JS -->
+                    <p class="text-gray-400 col-span-2">Loading voters...</p>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <button id="btn-reset"
+                    class="w10-full btn btn-outline text-red-500 border-red-200 hover:bg-red-50 py-4 text-lg">
+                    Reset Election
+                </button>
+            </div>
+
+
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/results.js"></script>
+</body>
+
+</html>
