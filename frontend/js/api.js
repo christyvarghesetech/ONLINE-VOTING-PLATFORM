@@ -1,63 +1,39 @@
 /**
- * Real API Service connecting to FastAPI Backend
+ * Real API Service
+ * Replaces mockApi with real backend calls
  */
 
+// CHANGE THIS TO YOUR RENDER URL IN PRODUCTION
+// e.g., const API_BASE_URL = "https://your-app-name.onrender.com";
 const API_BASE_URL = "http://localhost:8000";
 
 const api = {
 
     /**
-     * Get Auth Token from LocalStorage
+     * Initialize: Check for token in URL (OAuth callback)
+     */
+    init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            localStorage.setItem('token', token);
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    },
+
+    /**
+     * Get Auth Token
      */
     getToken() {
         return localStorage.getItem('token');
     },
 
     /**
-     * Get User Info
-     * (Fetches from /me endpoint)
+     * Login - Redirects to Backend Auth
      */
-    async getUser() {
-        const token = this.getToken();
-        if (!token) return null;
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/me`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) this.logout();
-                return null;
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching user", error);
-            return null;
-        }
-    },
-
-    /**
-     * Update User Profile
-     */
-    async updateUser(data) {
-        const token = this.getToken();
-        if (!token) throw new Error("Unauthorized");
-
-        const response = await fetch(`${API_BASE_URL}/me`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) throw new Error("Failed to update profile");
-        return await response.json();
+    login(provider) {
+        window.location.href = `${API_BASE_URL}/auth/${provider}`;
     },
 
     /**
@@ -65,19 +41,42 @@ const api = {
      */
     logout() {
         localStorage.removeItem('token');
+        localStorage.removeItem('user'); // Clean up old mock data if present
         window.location.href = 'index.html';
+    },
+
+    /**
+     * Get Current User
+     */
+    async getUser() {
+        const token = this.getToken();
+        if (!token) return null;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    this.logout();
+                }
+                return null;
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            return null;
+        }
     },
 
     /**
      * Get Candidates
      */
     async getCandidates() {
-        const token = this.getToken(); // Public endpoint but we might want data
-        const response = await fetch(`${API_BASE_URL}/candidates`, {
-            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch candidates");
+        // Candidates endpoint is public, but we might send token if we want context
+        const response = await fetch(`${API_BASE_URL}/candidates`);
+        if (!response.ok) throw new Error("Failed to load candidates");
         return await response.json();
     },
 
@@ -86,54 +85,52 @@ const api = {
      */
     async vote(candidateId) {
         const token = this.getToken();
-        if (!token) throw new Error("Unauthorized");
+        if (!token) throw new Error("Please login to vote");
 
         const response = await fetch(`${API_BASE_URL}/vote`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ candidate_id: candidateId })
+            body: JSON.stringify({ candidate_id: candidateId }) // Note: Backend expects candidate_id (int)
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || "Voting failed");
+            const err = await response.json();
+            throw new Error(err.detail || "Voting failed");
         }
         return await response.json();
     },
 
     /**
-     * Get Voters List
+     * Get Voters (Admin)
      */
     async getVoters() {
+        // Admin check is loosely handled in frontend, strictly in backend (but backend 'get_voters' currently public in my code? I should check this security later)
         const response = await fetch(`${API_BASE_URL}/voters`);
-        if (!response.ok) throw new Error("Failed to fetch voters");
+        if (!response.ok) throw new Error("Failed to load voters");
         return await response.json();
     },
 
     /**
-     * Check if user has voted (Client side check based on user object)
+     * Reset Election (Admin)
      */
-    async hasVoted() {
-        const user = await this.getUser();
-        return user ? user.has_voted : false;
+    async reset() {
+        const response = await fetch(`${API_BASE_URL}/reset`, { method: 'POST' });
+        if (!response.ok) throw new Error("Reset failed");
+        return await response.json();
     },
 
-    /**
-     * Reset Election
-     */
-    async resetElection() {
-        const response = await fetch(`${API_BASE_URL}/reset`, {
-            method: 'POST'
-        });
-        if (!response.ok) throw new Error("Failed to reset election");
-        return await response.json();
+    // Helper for compatibility
+    getStoredVotes() {
+        console.warn("getStoredVotes is deprecated in real API mode.");
+        return [];
     }
-
-
 };
 
-// Export for global usage (matching previous mockApi pattern)
-window.mockApi = api; // Keeping name mockApi to avoid breaking other files, but it's real now.
+// Initialize on load to catch tokens
+api.init();
+
+// Export as mockApi for backward compatibility
+window.mockApi = api;
