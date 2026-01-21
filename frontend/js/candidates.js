@@ -110,6 +110,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Make handleVote global so inline onclick works
     window.handleVote = async (candidateId) => {
+        // STRICT CHECK: Ensure user has LinkedIn profile before voting
+        // We re-fetch user or check the cached object to be safe
+        if (!user.linkedin_profile_url) {
+            alert("You must add your LinkedIn profile before voting.");
+            location.reload(); // Force reload to show modal again
+            return;
+        }
+
         if (!confirm('Are you sure you want to vote for this candidate? You cannot change your vote later.')) {
             return;
         }
