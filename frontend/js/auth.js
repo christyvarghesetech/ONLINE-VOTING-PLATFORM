@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         const user = await mockApi.getUser();
         if (user) {
-            window.location.href = 'candidates.chtml';
+            window.location.href = 'candidates.html';
             return;
         }
     }
