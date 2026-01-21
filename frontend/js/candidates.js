@@ -61,34 +61,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-    });
+
+
+        // Logout
+        logoutBtn.addEventListener('click', () => mockApi.logout());
+
+        // Check if already voted
+        const alreadyVoted = await mockApi.hasVoted();
+        if (alreadyVoted) {
+            window.location.href = 'voters.html';
+            return;
         }
-    }
 
-// Logout
-logoutBtn.addEventListener('click', () => mockApi.logout());
+        try {
+            const candidates = await mockApi.getCandidates();
+            renderCandidates(candidates);
+        } catch (error) {
+            grid.innerHTML = '<p class="text-red-500 text-center col-span-2">Failed to load candidates.</p>';
+        }
 
-// Check if already voted
-const alreadyVoted = await mockApi.hasVoted();
-if (alreadyVoted) {
-    window.location.href = 'voters.html';
-    return;
-}
+        function renderCandidates(candidates) {
+            grid.innerHTML = '';
+            candidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card fade-in';
 
-try {
-    const candidates = await mockApi.getCandidates();
-    renderCandidates(candidates);
-} catch (error) {
-    grid.innerHTML = '<p class="text-red-500 text-center col-span-2">Failed to load candidates.</p>';
-}
-
-function renderCandidates(candidates) {
-    grid.innerHTML = '';
-    candidates.forEach(candidate => {
-        const card = document.createElement('div');
-        card.className = 'candidate-card fade-in';
-
-        card.innerHTML = `
+                card.innerHTML = `
                 <div class="candidate-info">
                     <h2 class="candidate-name">${candidate.name}</h2>
                     <p class="candidate-role">${candidate.role || candidate.team_name}</p>
@@ -103,31 +101,31 @@ function renderCandidates(candidates) {
                     </button>
                 </div>
             `;
-        grid.appendChild(card);
+                grid.appendChild(card);
+            });
+        }
+
+        // Make handleVote global so inline onclick works
+        window.handleVote = async (candidateId) => {
+            if (!confirm('Are you sure you want to vote for this candidate? You cannot change your vote later.')) {
+                return;
+            }
+
+            const buttons = document.querySelectorAll('.btn-vote');
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.textContent = 'Voting...';
+            });
+
+            try {
+                await mockApi.vote(candidateId);
+                window.location.href = 'voters.html';
+            } catch (error) {
+                alert(error.message);
+                buttons.forEach(b => {
+                    b.disabled = false;
+                    b.textContent = 'Vote';
+                });
+            }
+        };
     });
-}
-
-// Make handleVote global so inline onclick works
-window.handleVote = async (candidateId) => {
-    if (!confirm('Are you sure you want to vote for this candidate? You cannot change your vote later.')) {
-        return;
-    }
-
-    const buttons = document.querySelectorAll('.btn-vote');
-    buttons.forEach(b => {
-        b.disabled = true;
-        b.textContent = 'Voting...';
-    });
-
-    try {
-        await mockApi.vote(candidateId);
-        window.location.href = 'voters.html';
-    } catch (error) {
-        alert(error.message);
-        buttons.forEach(b => {
-            b.disabled = false;
-            b.textContent = 'Vote';
-        });
-    }
-};
-});
