@@ -74,12 +74,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnReset.addEventListener('click', async () => {
             console.log("Reset Button Clicked"); // Debug
             if (confirm('Are you sure you want to delete ALL votes? This action cannot be undone.')) {
+                btnReset.disabled = true;
+                btnReset.innerHTML = "Resetting...";
                 try {
-                    btnReset.disabled = true;
-                    btnReset.innerHTML = "Resetting...";
-                    await mockApi.resetElection();
-                    alert("Election reset successfully.");
-                    window.location.reload();
+                    await mockApi.reset();
+                    alert('Election has been reset!');
+                    location.reload();
                 } catch (error) {
                     alert("Error resetting election: " + error.message);
                     btnReset.disabled = false;
