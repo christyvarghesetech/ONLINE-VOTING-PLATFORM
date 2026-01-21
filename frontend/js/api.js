@@ -42,7 +42,7 @@ const api = {
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user'); // Clean up old mock data if present
-        window.location.href = 'index.html';
+        window.location.href = '/';
     },
 
     /**
