@@ -51,14 +51,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             winnerLinkEl.classList.add('inline-flex');
             startConfetti();
         } else {
-            // Tie
-            winnerNameEl.textContent = "It's a Tie!";
+            // Tie Logic
+            winnerNameEl.innerHTML = `<span class="text-red-500">It's a Tie!</span> <br> <span class="text-xl">${winners.map(w => w.name).join(' & ')}</span>`;
             winnerVotesEl.textContent = maxVotes;
             tieMsgEl.classList.remove('hidden');
-
-            // List tied candidates
-            const tiedNames = winners.map(w => w.name).join(' & ');
-            winnerNameEl.textContent = tiedNames;
+            tieMsgEl.textContent = `Between ${winners.map(w => w.name).join(' and ')} with ${maxVotes} votes each.`;
         }
 
     } catch (error) {

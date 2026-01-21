@@ -43,21 +43,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Mock getting candidate name by ID for display
-        const getCandidateName = (id) => {
-            const c = mockApi.candidates.find(x => x.id === id);
-            return c ? c.name : 'Unknown';
-        };
+        // Mock getting candidate name by ID for display (This is tricky since backend sends candidate_id/name inside 'voters' if joined, or we need to fetch candidates)
+        // Wait, the backend /voters returns User objects? let's check.
+        // If backend returns VoterInfo list: { name, linkedin_profile_url, voted_candidate_id, timestamp? }
 
         tbody.innerHTML = voters.map(v => `
             <tr>
-                <td class="p-4 font-medium text-gray-900">${v.userName}</td>
-                <td class="p-4 text-primary font-medium">${getCandidateName(v.candidateId)}</td>
+                <td class="p-4 font-medium text-gray-900">${v.name}</td>
+                <td class="p-4 text-primary font-medium">${v.voted_candidate_id || 'Unknown'}</td> <!-- Ideally need candidate NAME here, but backend sends ID -->
                 <td class="p-4">
-                    <a href="${v.linkedinProfile}" target="_blank" class="text-sm text-blue-600 hover:underline">LinkedIn</a>
+                    ${v.linkedin_profile_url ? `<a href="${v.linkedin_profile_url}" target="_blank" class="text-sm text-blue-600 hover:underline">LinkedIn</a>` : '<span class="text-gray-400">N/A</span>'}
                 </td>
                 <td class="p-4 text-right text-xs text-secondary">
-                    ${new Date(v.timestamp).toLocaleString()}
+                    ${v.timestamp ? new Date(v.timestamp).toLocaleString() : 'Recent'}
                 </td>
             </tr>
         `).join('');
